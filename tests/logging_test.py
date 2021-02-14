@@ -9,10 +9,10 @@ import lambo
 logger = lambo.getLogger(__name__)
 
 
-@logger.attach()
+@logger.attach
 def handler(event=None, context=None):
     logger.warning('TEST')
-    return dict(ok=True)
+    return {'ok': True}
 
 
 class TestLogger:

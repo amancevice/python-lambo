@@ -47,13 +47,7 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
         # Initialize adapter with null RequestId
         super().__init__(logger, dict(reqid='-'))
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.extra.update(reqid='-')
-
-    def attach(self, logEvent=True, logReturn=True, **params):
+    def attach(self, handler):
         """
         Decorate Lambda handler to attach logger to AWS request.
 
@@ -61,35 +55,26 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
 
         >>> logger = lambo.getLogger(__name__)
         >>>
-        >>> @logger.attach(logEvent=True, logReturn=True)
+        >>> @logger.attach
         ... def handler(event, context):
         ...     logger.info('Hello, world!')
         ...     return {'ok': True}
-        >>>
+        ...
         >>> handler({'fizz': 'buzz'})
         >>> # => INFO RequestId: {awsRequestId} EVENT {"fizz": "buzz"}
         >>> # => INFO RequestId: {awsRequestId} Hello, world!
         >>> # => INFO RequestId: {awsRequestId} RETURN {"ok": True}
         """
-        # Set JSON default to ``str`` for safety
-        params.setdefault('default', str)
-
-        def decorate(handler):
-            def wrapper(event=None, context=None):
-                with self.setup(event, context):
-
-                    if logEvent:
-                        self.info('EVENT %s', json.dumps(event, **params))
-
-                    result = handler(event, context)
-
-                    if logReturn:
-                        self.info('RETURN %s', json.dumps(result, **params))
-
-                    return result
-
-            return wrapper
-        return decorate
+        def wrapper(event=None, context=None):
+            try:
+                self.addContext(context)
+                self.info('EVENT %s', json.dumps(event, default=str))
+                result = handler(event, context)
+                self.info('RETURN %s', json.dumps(result, default=str))
+            finally:
+                self.dropContext()
+                return result
+        return wrapper
 
     def addContext(self, context=None):
         """
@@ -100,13 +85,13 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
         except AttributeError:
             reqid = '-'
         self.extra.update(reqid=reqid)
+        return self
 
-    def setup(self, event, context=None, logEvent=False, logReturn=False):
+    def dropContext(self):
         """
-        Set up logger inside Lambda execution by adding the context object
-        and logging the event.
+        Drop runtime context from logger.
         """
-        self.addContext(context)
+        self.extra.update(reqid='-')
         return self
 
 

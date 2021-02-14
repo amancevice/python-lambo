@@ -7,7 +7,7 @@ setup(
     author='amancevice',
     author_email='smallweirdnum@gmail.com',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         'Environment :: Console',
         'Framework :: AsyncIO',
         'Intended Audience :: Developers',
