@@ -33,7 +33,7 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
         logger.setLevel(level or LOG_LEVEL)
 
         # Set handler if necessary
-        if not logger.handlers and not logger.parent.handlers:
+        if not logger.handlers:  # and not logger.parent.handlers:
             formatter = logging.Formatter(format_string or LOG_FORMAT)
             handler = logging.StreamHandler()
             handler.setFormatter(formatter)
