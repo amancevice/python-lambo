@@ -71,9 +71,9 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
                 self.info('EVENT %s', json.dumps(event, default=str))
                 result = handler(event, context)
                 self.info('RETURN %s', json.dumps(result, default=str))
+                return result
             finally:
                 self.dropContext()
-                return result
         return wrapper
 
     def addContext(self, context=None):
