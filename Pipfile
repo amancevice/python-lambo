@@ -5,11 +5,11 @@ verify_ssl = true
 
 [dev-packages]
 boto3 = "*"
-flake8 = "*"
 ipdb = "*"
 ipython = "*"
 pytest = "*"
 pytest-cov = "*"
+pytest-flake8 = "*"
 twine = "*"
 
 [packages]
