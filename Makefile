@@ -1,5 +1,4 @@
-PYFILES := $(shell find lambo tests -name '*.py')
-SDIST   := dist/$(shell python setup.py --fullname).tar.gz
+SDIST := dist/$(shell python setup.py --fullname).tar.gz
 
 all: $(SDIST)
 
@@ -11,7 +10,7 @@ upload: $(SDIST)
 
 .PHONY: all clean upload
 
-$(SDIST): $(PYFILES) Pipfile.lock
+$(SDIST): lambo.py Pipfile.lock
 	pipenv run pytest
 	python setup.py sdist
 

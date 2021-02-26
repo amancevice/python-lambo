@@ -1,4 +1,4 @@
-from setuptools import (find_packages, setup)
+from setuptools import setup
 
 with open('README.md', 'r') as readme:
     long_description = readme.read()
@@ -24,8 +24,8 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     name='lambo',
-    packages=find_packages(exclude=['tests']),
     python_requires='>= 3.7',
+    py_modules=['lambo'],
     setup_requires=['setuptools_scm'],
     url='https://github.com/amancevice/python-lambo',
     use_scm_version=True,
