@@ -29,6 +29,10 @@ END RequestId: 03cf3256-f2e1-461c-a4a0-60eb91ac8149
 REPORT RequestId: 03cf3256-f2e1-461c-a4a0-60eb91ac8149	Duration: 3000.00 ms	Billed Duration: 3000 ms	Memory Size: 128 MB	Max Memory Used: 128 MB
 ```
 
+> Why not use [aws_lambda_powertools](https://github.com/awslabs/aws-lambda-powertools-python/)? If you are already building your Lambda package with external dependencies well then you could probably use that great tool by AWS.
+>
+> But if you are looking for a lighter-weight solution with no external dependencies, then this might help you.
+
 ## Installation
 
 ```bash
