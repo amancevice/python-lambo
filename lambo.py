@@ -104,3 +104,6 @@ def getLogger(name, level=None, format_string=None):
     >>> getLogger('logger-name', 'DEBUG', '%(message)s')
     """
     return LambdaLoggerAdapter(name, level, format_string)
+
+
+logger = getLogger(__name__)
