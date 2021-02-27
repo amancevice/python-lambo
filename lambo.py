@@ -4,7 +4,7 @@ import os
 
 LOG_LEVEL = os.getenv('LAMBO_LOG_LEVEL') or logging.INFO
 LOG_FORMAT = os.getenv('LAMBO_LOG_FORMAT') \
-    or '%(levelname)s %(reqid)s %(message)s'
+    or '%(levelname)s %(awsRequestId)s %(message)s'
 
 
 class SuppressFilter(logging.Filter):
@@ -45,7 +45,7 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
             handler.addFilter(logFilter)
 
         # Initialize adapter with null RequestId
-        super().__init__(logger, dict(reqid='-'))
+        super().__init__(logger, dict(awsRequestId='-'))
 
     def attach(self, handler):
         """
@@ -81,17 +81,17 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
         Add runtime context to logger.
         """
         try:
-            reqid = f'RequestId: {context.aws_request_id}'
+            awsRequestId = f'RequestId: {context.aws_request_id}'
         except AttributeError:
-            reqid = '-'
-        self.extra.update(reqid=reqid)
+            awsRequestId = '-'
+        self.extra.update(awsRequestId=awsRequestId)
         return self
 
     def dropContext(self):
         """
         Drop runtime context from logger.
         """
-        self.extra.update(reqid='-')
+        self.extra.update(awsRequestId='-')
         return self
 
 

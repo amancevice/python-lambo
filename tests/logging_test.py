@@ -17,9 +17,10 @@ def handler(event=None, context=None):
 
 class TestLogger:
     def setup(self):
-        self.formatter = Formatter('%(levelname)s %(reqid)s %(message)s')
+        self.formatter = \
+            Formatter('%(levelname)s %(awsRequestId)s %(message)s')
 
-    @pytest.mark.parametrize(('event', 'context', 'reqid'), [
+    @pytest.mark.parametrize(('event', 'context', 'awsRequestId'), [
         (
             {'fizz': 'buzz'},
             SimpleNamespace(aws_request_id='<awsRequestId>'),
@@ -31,7 +32,7 @@ class TestLogger:
             '-'
         ),
     ])
-    def test_handler(self, caplog, event, context, reqid):
+    def test_handler(self, caplog, event, context, awsRequestId):
         caplog.handler.setFormatter(self.formatter)
 
         with caplog.at_level('DEBUG'):
@@ -39,9 +40,9 @@ class TestLogger:
             logger.info('OUT OF CONTEXT')
 
         exp = dedent(f"""\
-            INFO {reqid} EVENT {{"fizz": "buzz"}}
-            WARNING {reqid} TEST
-            INFO {reqid} RETURN {{"ok": true}}
+            INFO {awsRequestId} EVENT {{"fizz": "buzz"}}
+            WARNING {awsRequestId} TEST
+            INFO {awsRequestId} RETURN {{"ok": true}}
             INFO - OUT OF CONTEXT
         """)
         assert caplog.text == exp
