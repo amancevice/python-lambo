@@ -25,18 +25,19 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
     """
     Lambda logger adapter.
     """
-    def __init__(self, name, level=None, format_string=None):
-        # Get logger, formatter
+    @staticmethod
+    def getLogger(name, level=None, format_string=None, stream=None):
+        # Get logger, handler, formatter
         logger = logging.getLogger(name)
+        handler = logging.StreamHandler(stream)
+        formatter = logging.Formatter(format_string or LOG_FORMAT)
+        handler.setFormatter(formatter)
 
         # Set log level
         logger.setLevel(level or LOG_LEVEL)
 
         # Set handler if necessary
         if not logger.handlers:  # and not logger.parent.handlers:
-            formatter = logging.Formatter(format_string or LOG_FORMAT)
-            handler = logging.StreamHandler()
-            handler.setFormatter(formatter)
             logger.addHandler(handler)
 
         # Suppress AWS logging for this logger
@@ -44,8 +45,10 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
             logFilter = SuppressFilter(name)
             handler.addFilter(logFilter)
 
-        # Initialize adapter with null RequestId
-        super().__init__(logger, dict(awsRequestId='-'))
+        return logger
+
+    def __init__(self, logger, extra=None):
+        super().__init__(logger, extra or dict(awsRequestId='-'))
 
     def attach(self, handler):
         """
@@ -95,7 +98,7 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
         return self
 
 
-def getLogger(name, level=None, format_string=None):
+def getLogger(name, level=None, format_string=None, stream=None):
     """
     Helper to get Lambda logger.
 
@@ -103,7 +106,8 @@ def getLogger(name, level=None, format_string=None):
 
     >>> getLogger('logger-name', 'DEBUG', '%(message)s')
     """
-    return LambdaLoggerAdapter(name, level, format_string)
+    logger = LambdaLoggerAdapter.getLogger(name, level, format_string, stream)
+    return LambdaLoggerAdapter(logger)
 
 
 logger = getLogger(__name__)

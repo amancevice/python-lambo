@@ -1,4 +1,4 @@
-from logging import Formatter
+from io import StringIO
 from textwrap import dedent
 from types import SimpleNamespace
 
@@ -6,43 +6,45 @@ import pytest
 
 import lambo
 
-logger = lambo.getLogger(__name__)
-
-
-@logger.attach
-def handler(event=None, context=None):
-    logger.warning('TEST')
-    return {'ok': True}
-
 
 class TestLogger:
     def setup(self):
-        self.formatter = \
-            Formatter('%(levelname)s %(awsRequestId)s %(message)s')
+        self.stream = StringIO()
 
-    @pytest.mark.parametrize(('event', 'context', 'awsRequestId'), [
+    @pytest.mark.parametrize(('event', 'context', 'name', 'awsRequestId'), [
         (
             {'fizz': 'buzz'},
             SimpleNamespace(aws_request_id='<awsRequestId>'),
+            'lambda',
             'RequestId: <awsRequestId>'
         ),
         (
             {'fizz': 'buzz'},
             None,
+            'local',
             '-'
         ),
     ])
-    def test_handler(self, caplog, event, context, awsRequestId):
-        caplog.handler.setFormatter(self.formatter)
+    def test_attach(self, event, context, name, awsRequestId):
+        logger = lambo.getLogger(name, stream=self.stream)
+        logger.setLevel('DEBUG')
 
-        with caplog.at_level('DEBUG'):
-            handler(event, context)
-            logger.info('OUT OF CONTEXT')
+        @logger.attach
+        def handler(event=None, context=None):
+            logger.warning('TEST')
+            return {'ok': True}
+
+        logger.debug('BEFORE CONTEXT')
+        handler(event, context)
+        logger.debug('AFTER CONTEXT')
 
         exp = dedent(f"""\
+            DEBUG - BEFORE CONTEXT
             INFO {awsRequestId} EVENT {{"fizz": "buzz"}}
             WARNING {awsRequestId} TEST
             INFO {awsRequestId} RETURN {{"ok": true}}
-            INFO - OUT OF CONTEXT
+            DEBUG - AFTER CONTEXT
         """)
-        assert caplog.text == exp
+        self.stream.seek(0)
+        ret = self.stream.read()
+        assert ret == exp
