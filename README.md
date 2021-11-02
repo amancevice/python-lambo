@@ -60,6 +60,7 @@ Or, if brevity is your thing, import the built-in logger:
 ```python
 from lambo import logger
 
+
 @logger.bind
 def handler(event, context):
     logger.info('HELLO!')
