@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from pkg_resources import (get_distribution, DistributionNotFound)
 
 LOG_LEVEL = os.getenv('LAMBO_LOG_LEVEL') or logging.INFO
 LOG_FORMAT = os.getenv('LAMBO_LOG_FORMAT') \
@@ -98,6 +99,13 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
         return self
 
 
+def _version():
+    try:
+        return get_distribution(__name__).version
+    except DistributionNotFound:  # pragma: no cover
+        return None
+
+
 def getLogger(name, level=None, format_string=None, stream=None):
     """
     Helper to get Lambda logger.
@@ -110,4 +118,5 @@ def getLogger(name, level=None, format_string=None, stream=None):
     return LambdaLoggerAdapter(logger)
 
 
+__version__ = _version()
 logger = getLogger(__name__)
