@@ -5,14 +5,17 @@ all: $(SDIST)
 clean:
 	rm -rf dist
 
-upload: $(SDIST)
-	twine upload $<
+upload: Brewfile.lock.json $(SDIST)
+	twine upload $(SDIST)
 
 .PHONY: all clean upload
 
 $(SDIST): lambo.py Pipfile.lock
 	pipenv run pytest
 	python setup.py sdist
+
+Brewfile.lock.json: Brewfile
+	brew bundle
 
 Pipfile.lock: Pipfile
 	pipenv install --dev
