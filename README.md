@@ -41,7 +41,7 @@ pip install lambo
 
 ## Usage
 
-Create a logger using the `getLogger()` method and attach it to your Lambda handler functions with the `@attach` decorator.
+Create a logger using the `getLogger()` method and bind it to your Lambda handler functions with the `@bind` decorator.
 
 ```python
 import lambo
@@ -49,7 +49,7 @@ import lambo
 logger = lambo.getLogger('my-logger')
 
 
-@logger.attach
+@logger.bind
 def handler(event, context):
     logger.info('HELLO!')
     return {'ok': True}
@@ -60,7 +60,7 @@ Or, if brevity is your thing, import the built-in logger:
 ```python
 from lambo import logger
 
-@logger.attach
+@logger.bind
 def handler(event, context):
     logger.info('HELLO!')
     return {'ok': True}
