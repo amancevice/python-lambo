@@ -6,6 +6,8 @@ import pytest
 
 import lambo
 
+lambo.LAMBO_LOG_JSON_INDENT = '2'
+
 
 class TestLogger:
     def setup(self):
@@ -40,9 +42,13 @@ class TestLogger:
 
         exp = dedent(f"""\
             DEBUG - BEFORE CONTEXT
-            INFO {awsRequestId} EVENT {{"fizz": "buzz"}}
+            INFO {awsRequestId} EVENT {{
+              "fizz": "buzz"
+            }}
             WARNING {awsRequestId} TEST
-            INFO {awsRequestId} RETURN {{"ok": true}}
+            INFO {awsRequestId} RETURN {{
+              "ok": true
+            }}
             DEBUG - AFTER CONTEXT
         """)
         self.stream.seek(0)

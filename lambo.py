@@ -3,6 +3,7 @@ import logging
 import os
 from pkg_resources import (get_distribution, DistributionNotFound)
 
+LAMBO_LOG_JSON_INDENT = os.getenv('LAMBO_LOG_JSON_INDENT') or None
 LOG_LEVEL = os.getenv('LAMBO_LOG_LEVEL') or logging.INFO
 LOG_FORMAT = os.getenv('LAMBO_LOG_FORMAT') \
     or '%(levelname)s %(awsRequestId)s %(message)s'
@@ -71,10 +72,13 @@ class LambdaLoggerAdapter(logging.LoggerAdapter):
         """
         def wrapper(event=None, context=None):
             try:
+                params = {'default': str}
+                if LAMBO_LOG_JSON_INDENT:
+                    params.update(indent=int(LAMBO_LOG_JSON_INDENT))
                 self.addContext(context)
-                self.info('EVENT %s', json.dumps(event, default=str))
+                self.info('EVENT %s', json.dumps(event, **params))
                 result = handler(event, context)
-                self.info('RETURN %s', json.dumps(result, default=str))
+                self.info('RETURN %s', json.dumps(result, **params))
                 return result
             finally:
                 self.dropContext()
