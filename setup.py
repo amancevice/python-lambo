@@ -28,7 +28,6 @@ setup(
     name='lambo',
     python_requires='>= 3.6',
     py_modules=['lambo'],
-    setup_requires=['setuptools_scm'],
     url='https://github.com/amancevice/python-lambo',
-    use_scm_version=True,
+    version='0.3.1'
 )
