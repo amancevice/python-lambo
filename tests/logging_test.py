@@ -6,8 +6,6 @@ import pytest
 
 import lambo
 
-lambo.LAMBO_LOG_JSON_INDENT = '2'
-
 
 class TestLogger:
     def setup(self):
