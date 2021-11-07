@@ -29,5 +29,5 @@ setup(
     python_requires='>= 3.6',
     py_modules=['lambo'],
     url='https://github.com/amancevice/python-lambo',
-    version='0.3.1'
+    version='0.3.2'
 )
