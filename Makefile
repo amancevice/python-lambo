@@ -1,21 +1,25 @@
-SDIST := dist/$(shell python setup.py --fullname).tar.gz
+all: test build
 
-all: $(SDIST)
+build: .venv
+	pipenv run flit build
 
 clean:
 	rm -rf dist
 
-upload: Brewfile.lock.json $(SDIST)
-	twine upload $(SDIST)
+ipython:
+	pipenv run ipython
 
-.PHONY: all clean upload
+publish: test build
+	git diff HEAD --quiet
+	pipenv run flit publish
 
-$(SDIST): lambo.py Pipfile.lock
+test: .venv
+	pipenv run black --check lambo.py tests
 	pipenv run pytest
-	python setup.py sdist
 
-Brewfile.lock.json: Brewfile
-	brew bundle
+.PHONY: all build clean ipython publish test
 
-Pipfile.lock: Pipfile
+Pipfile.lock .venv: Pipfile
+	mkdir -p .venv
 	pipenv install --dev
+	touch .venv
