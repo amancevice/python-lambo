@@ -1,6 +1,7 @@
 """
 Simple and visually pleasing logger for AWS Lambda
 """
+
 import json
 import logging
 import os
