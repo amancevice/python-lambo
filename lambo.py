@@ -6,7 +6,7 @@ import json
 import logging
 import os
 
-__version__ = "0.3.2"
+__version__ = "0.4.0"
 
 LOG_JSON_INDENT = os.getenv("LAMBO_LOG_JSON_INDENT")
 LOG_LEVEL = os.getenv("LAMBO_LOG_LEVEL", logging.INFO)
