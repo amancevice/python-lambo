@@ -3,7 +3,9 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-authors = [{name = "Alexander Mancevice", email = "alexander.mancevice@hey.com"}]
+authors = [
+  { name = "Alexander Mancevice", email = "alexander.mancevice@hey.com" },
+]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
@@ -16,10 +18,11 @@ classifiers = [
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Topic :: Utilities",
 ]
 dynamic = ["version", "description"]
-license = {file = "LICENSE"}
+license = { file = "LICENSE" }
 name = "lambo"
 requires-python = ">= 3.7"
 readme = "README.md"
@@ -29,4 +32,4 @@ Home = "https://github.com/amancevice/python-lambo"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts    = " --cov lambo --cov tests --cov-report term-missing --cov-report xml"
+addopts = " --cov lambo --cov tests --cov-report term-missing --cov-report xml"
